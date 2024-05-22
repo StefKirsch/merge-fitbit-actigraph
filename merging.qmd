@@ -1,0 +1,52 @@
+---
+title: "Merge actigraph and fitbit"
+format: html
+editor: visual
+---
+
+# Actigraph and fitbit data merging
+
+```{r}
+library(tidyverse)
+library(anytime)
+```
+
+```{r}
+df_actigraph <- read.csv("input/part2_daysummary_longformat.csv") |>
+  filter(
+    qwindow_name == "0-24hr"
+  ) |>
+  mutate(Date = anydate(calendar_date)) |> 
+  select(ID, Date, step_count_sum) |> 
+  mutate(ID = str_extract(ID, "^[A-Z]{2}-\\d{1,3}-\\d{1,3}"))
+```
+
+Read Fitbit data
+
+```{r}
+df_daily <- read.csv("input/VALIDATION_daily_steps_hr.csv") |> rename(
+  ID = study.number
+) |> 
+  mutate(
+    Date = anydate(Date)
+  ) |> 
+  # remove this later
+  mutate(ID = "OP-15-012")
+```
+
+Join fitbit and actigraph data
+
+```{r}
+df_merged <- left_join(
+  df_actigraph,
+  df_daily,
+  by = c("Date", "ID")
+) |> 
+  select(
+    ID, Date, step_count_sum, value.steps
+  )
+```
+
+```{r}
+df_hourly <- read.csv("input/VALIDATION_intraday_per_hour.csv")
+```

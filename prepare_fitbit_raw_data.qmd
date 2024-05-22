@@ -1,0 +1,66 @@
+---
+title: "Prepare fitbit raw data"
+format: html
+editor: visual
+---
+
+# Prepare fitbit raw data
+
+This notebook reads an Excel file to determine the correspondence between zip file names and folder names. It then creates the appropriate folders and moves each zip file into its corresponding folder.
+
+This step is necessary to label the participants correctly with the data cleaning routine [here](https://gitlab.uvt.nl/skirsch/profiel-study-data-cleaning).
+
+```{r}
+library(readxl)
+library(fs)
+```
+
+## Define Paths
+
+```{r}
+# Define the path to the Excel file and the directory containing the zip files
+excel_path <- "input/fibit en optimum nummers key.xlsx"
+zip_dir <- "input/Fitbit data/"
+output_dir <- "output/Fitbit data prep"
+```
+
+## Read Excel File
+
+```{r}
+# Read the Excel file
+key_data <- read_excel(excel_path, col_names = TRUE)
+
+# Ensure columns are named as expected
+if (!all(c("Studienummer", "fitbitnr") %in% colnames(key_data))) {
+  stop("The Excel file must contain 'Studienummer' and 'fitbitnr' columns.")
+}
+```
+
+## Create Folders and Move Zip Files
+
+```{r}
+# Create folders and copy zip files only if the zip file exists
+for (i in seq_len(nrow(key_data))) {
+  # Get the folder name and the zip file name
+  folder_name <- key_data$Studienummer[i]
+  zip_file_name <- paste0(key_data$fitbitnr[i], ".zip")
+  
+  # Define the full paths
+  folder_path <- file.path(output_dir, folder_name)
+  zip_file_path <- file.path(zip_dir, zip_file_name)
+  
+  # Copy the zip file to the new folder if it exists
+  if (file_exists(zip_file_path)) {
+    # Create the folder if it doesn't exist
+    if (!dir_exists(folder_path)) {
+      dir_create(folder_path)
+    }
+    
+    file_copy(zip_file_path, file.path(folder_path, zip_file_name))
+  } else {
+    warning(paste("Zip file", zip_file_name, "does not exist in the directory."))
+  }
+}
+
+print("Files have been successfully copied.")
+```
