@@ -20,7 +20,7 @@ library(fs)
 ```{r}
 # Define the path to the Excel file and the directory containing the zip files
 excel_path <- "input/fibit en optimum nummers key.xlsx"
-zip_dir <- "input/Fitbit data/"
+zip_dir <- "input/Fitbit data/Fitbit data raw/"
 output_dir <- "output/Fitbit data prep"
 ```
 
