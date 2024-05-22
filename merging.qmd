@@ -29,9 +29,7 @@ df_daily <- read.csv("input/VALIDATION_daily_steps_hr.csv") |> rename(
 ) |> 
   mutate(
     Date = anydate(Date)
-  ) |> 
-  # remove this later
-  mutate(ID = "OP-15-012")
+  )
 ```
 
 Join fitbit and actigraph data
