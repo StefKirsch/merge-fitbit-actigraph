@@ -54,6 +54,8 @@ df_merged <- left_join(
   select(
     ID, Date, step_count_sum, value.steps
   )
+
+write.csv(df_merged, "output/joined_daily.csv")
 ```
 
 ### Hourly data
