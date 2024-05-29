@@ -7,7 +7,7 @@ editor: visual
 # Actigraph and fitbit data merging
 
 ```{r}
-library(tidyverse)
+library(tidyverse, warn.conflicts = FALSE)
 library(anytime)
 ```
 
